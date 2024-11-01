@@ -64,6 +64,18 @@ Frontend ve backend dizinlerinden birnde
 ```bash
 pip install -r requirements.txt
 ```
+## Proje Videosu:
+
+Projenin kullanıldığı videoya erişmek için:
+
+<object width="425" height="350">
+  <param name="movie" value="http://www.youtube.com/user/wwwLoveWatercom?v=BTRN1YETpyg" />
+  <param name="wmode" value="transparent" />
+  <embed src="https://youtu.be/K8HLpl2uiys"
+         type="application/x-shockwave-flash"
+         wmode="transparent" width="425" height="350" />
+</object>
+
 
 ## Proje içi Görseller
 
