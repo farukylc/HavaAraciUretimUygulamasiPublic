@@ -68,13 +68,10 @@ pip install -r requirements.txt
 
 Projenin kullanıldığı videoya erişmek için:
 
-<object width="425" height="350">
-  <param name="movie" value="http://www.youtube.com/user/wwwLoveWatercom?v=BTRN1YETpyg" />
-  <param name="wmode" value="transparent" />
-  <embed src="https://youtu.be/K8HLpl2uiys"
-         type="application/x-shockwave-flash"
-         wmode="transparent" width="425" height="350" />
-</object>
+
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/K8HLpl2uiys" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 
 ## Proje içi Görseller
