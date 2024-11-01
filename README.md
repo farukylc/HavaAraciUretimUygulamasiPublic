@@ -43,18 +43,6 @@ Bu proje, güvenli kullanıcı erişimi sağlamak için JWT (JSON Web Token) tab
 git clone https://github.com/farukylc/HavaAraciUretimUygulamasi.git
 ```
 
-
-# Gerekli bağımlılıkları yükleyin
-```bash
-pip install -r requirements.txt
-```
-
-# Veritabanını oluşturun
-```bash
-python manage.py migrate
-python manage.py makemigrations
-```
-
 # Projeyi Ayağa Kaldırın
 
 Projeyi docker ile ayağa kaldırmak için
@@ -72,7 +60,10 @@ python manage.py runserver
 cd frontend
 python manage.py runserver 8001
 ```
-
+Frontend ve backend dizinlerinden birnde
+```bash
+pip install -r requirements.txt
+```
 
 ## Proje içi Görseller
 
