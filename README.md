@@ -67,12 +67,7 @@ pip install -r requirements.txt
 ## Proje Videosu:
 
 Projenin kullanıldığı videoya erişmek için:
-
-
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/K8HLpl2uiys" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-
+https://www.youtube.com/embed/K8HLpl2uiys
 
 ## Proje içi Görseller
 
