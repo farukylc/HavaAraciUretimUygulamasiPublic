@@ -23,6 +23,8 @@ Bu proje, güvenli kullanıcı erişimi sağlamak için JWT (JSON Web Token) tab
 
 **Python**: Proje geliştirme dili olarak kullanıldı.
 
+**Docker**: Proje docker ile kolayca ayağa kaldırılabilir.
+
 **Django:** Projenin backend altyapısı için tercih edildi. Django, yüksek performanslı bir MVC yapısı sunar.
 
 **Django Rest Framework**: API oluşturma sürecinde kullanıldı.
@@ -50,9 +52,13 @@ python manage.py makemigrations
 
 # Projeyi Ayağa Kaldırın
 
-Bu proje frontend ve backend olmak üzere iki kısımdan oluşmaktadır. Aşağıdaki komutlar ile projeelri ayağa kaldırabilirsiniz. API_BASE_URL="http://127.0.0.1:8000/" olarak ayarlanmıştır.
+Projeyi docker ile ayağa kaldırmak için
+```bash
+docker-compose up --build
+```
+komutunu kullanabilirsiniz
 
-Frontendin backend ile iletişimini sağlamak için .env dosyasında bu kısmı güncelleyebilrisiniz
+Projeyi docker kullanmadan ayağa kaldırmak isterseniz API_BASE_URL="http://127.0.0.1:8000/" şeklinde olmalıdır.
 
 ```bash
 cd backend
