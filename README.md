@@ -1,6 +1,11 @@
 # İHA Üretim ve Montaj Yönetim Sistemi
 Bu proje, İHA parçalarının yönetimi ve montajı için geliştirilen bir uygulamadır. Proje, her bir parçanın üretimi, ekiplere göre atanması, envanter yönetimi ve İHA montajı gibi özellikleri içerir. Montaj işlemleri sadece Montaj Ekibi tarafından gerçekleştirilirken, her bir İHA modeli için belirli parça kuralları tanımlanmıştır. Proje, uçak üretimi ve parçaların tek seferlik kullanımını sağlamak üzere tasarlanmıştır.
 
+#Projenin Deploy edilmesi
+Bu proje Railway kullanılarak deploy edilmiştir. Aşağıdaki linken uygulamaya erişip kendiniz için kullanıcılar oluşturup test edebilirsiniz.
+
+https://havaaraciuretimuygulamasi-production.up.railway.app/login/
+
 # Özellikler
 
 **Kullanıcı Yönetimi**: Kullanıcılar, farklı departmanlara göre yönetilir ve her kullanıcının kendi ekibi için parça üretimi yapmasına izin verilir.
