@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uçak Parça Yönetimi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .table-responsive {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .airplane-image {
+            display: none;
+            max-width: 700px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    {% load static %}
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Proje</a>
+            <div class="d-flex align-items-center ms-auto">
+                <div class="text-end me-3">
+                    <div><strong>{{ username }}</strong></div>
+                    <div class="navbar-text">Departman: {{ department }}</div>
+                </div>
+                <a class="btn btn-danger" href="{% url 'logout' %}" onclick="clearSelectedData()">Çıkış Yap</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- Başarı veya Hata Mesajları -->
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <!-- Sol: Model ve Uçak Seçimi -->
+            <div class="col-md-4">
+                <h2 class="text-center">Uçak Modeline Göre Parça Tak</h2>
+                
+                <!-- Model Seç Dropdown'u -->
+                <div class="mb-3">
+                    <label for="modelSelect" class="form-label">Model Seç</label>
+                    <select id="modelSelect" class="form-select">
+                        <option value="" selected>Tüm Modeller</option>
+                        <option value="TB2">TB2</option>
+                        <option value="TB3">TB3</option>
+                        <option value="AKINCI">AKINCI</option>
+                        <option value="KIZILELMA">KIZILELMA</option>
+                    </select>
+                </div>
+
+                <!-- Uçak Yok Mesajı -->
+                <div id="noAirplanesMessage" class="text-danger mb-3" style="display: none;">
+                    Bu modelde uçak bulunmamaktadır. Lütfen uçak planı oluşturun.
+                </div>
+
+                <!-- Uçak Seç Dropdown'u -->
+                <form action="{% url 'manage_airplanes' %}" method="POST" class="mb-5">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="airplaneSelect" class="form-label">Uçak Seç</label>
+                        <select name="airplane_id" id="airplaneSelect" class="form-select" required disabled>
+                            <option value="" disabled selected>Uçak Seçiniz</option>
+                            {% for airplane in airplanes %}
+                                <option value="{{ airplane.id }}" data-model="{{ airplane.model_type }}">
+                                    {{ airplane.model_type }} - ID: {{ airplane.id }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="pieceSelect" class="form-label">Parça Seç</label>
+                        <select name="piece_id" id="pieceSelect" class="form-select" disabled required>
+                            <option value="" disabled selected>Parça seçmek için uçak seçiniz</option>
+                            {% for piece in pieces %}
+                                <option value="{{ piece.id }}" data-model="{{ piece.model_type }}" disabled>
+                                    {{ piece.piece_type }} ({{ piece.model_type }}) - ID: {{ piece.id }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div id="noPiecesMessage" class="text-danger mt-2" style="display: none;">
+                            Uygun parça yok, lütfen parça üretimi yapın.
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Parça Tak</button>
+                </form>
+            </div>
+
+            <!-- Sağ: Mevcut Uçak Bilgileri -->
+            <div class="col-md-8">
+                <h2 class="text-center">Mevcut Uçak Bilgileri</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="position: sticky; top: 0; background-color: #343a40; z-index: 1;">Uçak Modeli</th>
+                                <th style="position: sticky; top: 0; background-color: #343a40; z-index: 1;">Uçak ID</th>
+                                <th style="position: sticky; top: 0; background-color: #343a40; z-index: 1;">Parçalar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="airplaneTableBody">
+                            <tr id="noAirplaneMessage">
+                                <td colspan="3" class="text-center text-muted">Bilgileri görmek için bir uçak seçiniz.</td>
+                            </tr>
+                            {% for airplane in airplanes %}
+                                <tr class="airplane-row {% cycle 'table-light' 'table-secondary' %}" data-airplane-id="{{ airplane.id }}" style="display: none;">
+                                    <td>{{ airplane.model_type }}</td>
+                                    <td>{{ airplane.id }}</td>
+                                    <td>
+                                        {% if airplane.pieces %}
+                                            <ul>
+                                                {% for piece_wrapper in airplane.pieces %}
+                                                    <li>{{ piece_wrapper.piece.piece_type }} ({{ piece_wrapper.piece.model_type }}) - ID: {{ piece_wrapper.piece.id }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <span class="text-muted">Bu uçakta parça bulunmamaktadır.</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Seçilen Uçağın Resmi -->
+                <img id="airplaneImage" class="airplane-image" src="" alt="Seçilen Uçak Modeli Resmi">
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modelSelect = document.getElementById("modelSelect");
+        const airplaneSelect = document.getElementById("airplaneSelect");
+        const pieceSelect = document.getElementById("pieceSelect");
+        const noPiecesMessage = document.getElementById("noPiecesMessage");
+        const noAirplanesMessage = document.getElementById("noAirplanesMessage");
+        const noAirplaneMessage = document.getElementById("noAirplaneMessage");
+        const airplaneImage = document.getElementById("airplaneImage");
+        const firstOption = pieceSelect.options[0];
+    
+        // Sayfa yüklendiğinde seçili model ve uçak bilgilerini koru
+        const selectedModel = localStorage.getItem("selectedModel");
+        const selectedAirplaneId = localStorage.getItem("selectedAirplaneId");
+    
+        if (selectedModel) {
+            modelSelect.value = selectedModel;
+            filterAirplanesByModel(selectedModel);
+            airplaneSelect.disabled = selectedModel === "";  
+    
+            if (selectedAirplaneId) {
+                airplaneSelect.value = selectedAirplaneId;
+                airplaneSelect.disabled = false;  
+                updatePieceSelectAndImage(selectedAirplaneId);
+            }
+        }
+    
+        modelSelect.addEventListener("change", function() {
+            const selectedModel = modelSelect.value;
+            localStorage.setItem("selectedModel", selectedModel);
+    
+            filterAirplanesByModel(selectedModel);
+            airplaneSelect.disabled = selectedModel === "";  
+        });
+    
+        function filterAirplanesByModel(selectedModel) {
+            const airplaneOptions = airplaneSelect.querySelectorAll("option");
+            let airplaneAvailable = false;
+    
+            airplaneSelect.value = "";  
+    
+            airplaneOptions.forEach(option => {
+                const isMatchingModel = selectedModel === "" || option.getAttribute("data-model") === selectedModel;
+                option.style.display = isMatchingModel ? "" : "none";
+                if (isMatchingModel) airplaneAvailable = true;
+            });
+    
+            noAirplanesMessage.style.display = airplaneAvailable ? "none" : "block";
+            airplaneSelect.disabled = selectedModel === "" || !airplaneAvailable;
+        }
+    
+        airplaneSelect.addEventListener("change", function() {
+            const airplaneId = this.value;
+            localStorage.setItem("selectedAirplaneId", airplaneId);
+    
+            updatePieceSelectAndImage(airplaneId);
+        });
+    
+        function updatePieceSelectAndImage(airplaneId) {
+            const airplaneModel = airplaneSelect.options[airplaneSelect.selectedIndex].getAttribute("data-model");
+    
+            airplaneImage.src = `{% static 'images/' %}${airplaneModel.toLowerCase()}.png`;
+            airplaneImage.alt = `${airplaneModel} Modeli Resmi`;
+            airplaneImage.style.display = "block";
+    
+            displayAirplaneDetails(airplaneId);
+    
+            pieceSelect.disabled = false;
+            firstOption.text = "Parça Seçebilirsiniz";
+    
+            let hasValidPiece = false;
+            const pieceOptions = pieceSelect.querySelectorAll("option");
+            pieceOptions.forEach((option, index) => {
+                if (index === 0) return;
+                option.disabled = option.getAttribute("data-model") !== airplaneModel;
+                if (!option.disabled) hasValidPiece = true;
+            });
+    
+            noPiecesMessage.style.display = hasValidPiece ? "none" : "block";
+            pieceSelect.disabled = !hasValidPiece;
+            firstOption.text = hasValidPiece ? "Parça Seçebilirsiniz" : "Parça seçmek için uçak seçiniz";
+        }
+    
+        function displayAirplaneDetails(airplaneId) {
+            const rows = document.querySelectorAll('.airplane-row');
+            let airplaneSelected = false;
+    
+            rows.forEach(row => {
+                row.style.display = row.getAttribute('data-airplane-id') === airplaneId ? "" : "none";
+                airplaneSelected = airplaneSelected || row.style.display === "";
+            });
+    
+            noAirplaneMessage.style.display = airplaneSelected ? "none" : "";
+        }
+    });
+    
+    function clearSelectedData() {
+        localStorage.removeItem("selectedModel");
+        localStorage.removeItem("selectedAirplaneId");
+    }
+</script>
+</body>
+</html>

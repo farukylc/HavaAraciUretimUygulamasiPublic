@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parça Listesi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% load static %}
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Proje</a>
+            <div class="d-flex align-items-center ms-auto">
+                <div class="text-end me-3">
+                    <div><strong>{{ username }}</strong></div>
+                    <div class="navbar-text">Departman: {{ department }}</div>
+                </div>
+                <a class="btn btn-danger" href="{% url 'logout' %}">Çıkış Yap</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Ekibimin Parçaları -->
+    <div class="container">
+        <h2 class="mb-4 text-center">Ekibimin Parçaları</h2>
+        {% if user_team_pieces %}
+            <table class="table table-bordered table-hover text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>Parça Türü</th>
+                        <th>Model Türü</th>
+                        <th>Parça ID</th>
+                        <th>Kullanım Durumu</th>
+                    </tr>
+                </thead>
+                <tbody id="userTeamPiecesTable">
+                    {% for piece in user_team_pieces %}
+                        <tr class="piece-row" data-usage="{{ piece.is_used }}">
+                            <td>{{ piece.piece_type }}</td>
+                            <td>{{ piece.model_type }}</td>
+                            <td>{{ piece.id }}</td>
+                            <td>
+                                {% if piece.is_used %}
+                                    <span class="text-danger"><i class="fas fa-times-circle"></i> Kullanılmış</span>
+                                {% else %}
+                                    <span class="text-success"><i class="fas fa-check-circle"></i> Kullanılmamış</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-center">Ekibinize ait parça bulunamadı.</p>
+        {% endif %}
+    </div>
+
+    <!-- Diğer Parçalar -->
+    <div class="container mt-5">
+        <h2 class="mt-5 text-center">Diğer Parçalar</h2>
+        <table class="table table-hover table-bordered text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Parça Türü</th>
+                    <th>Model Türü</th>
+                    <th>Parça ID</th>
+                    <th>Kullanım Durumu</th>
+                </tr>
+            </thead>
+            <tbody id="otherTeamPiecesTable">
+                {% for piece in other_team_pieces_page %}
+                    <tr class="piece-row" data-usage="{{ piece.is_used }}">
+                        <td>{{ piece.piece_type }}</td>
+                        <td>{{ piece.model_type }}</td>
+                        <td>{{ piece.id }}</td>
+                        <td>
+                            {% if piece.is_used %}
+                                <span class="text-danger"><i class="fas fa-times-circle"></i> Kullanılmış</span>
+                            {% else %}
+                                <span class="text-success"><i class="fas fa-check-circle"></i> Kullanılmamış</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if other_team_pieces_page.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ other_team_pieces_page.previous_page_number }}">Önceki</a></li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ other_team_pieces_page.number }}</span></li>
+                {% if other_team_pieces_page.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ other_team_pieces_page.next_page_number }}">Sonraki</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

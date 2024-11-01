@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uçak Planı Üret ve Listele</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    {% load static %}
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Proje</a>
+            <div class="d-flex align-items-center ms-auto">
+                <div class="text-end me-3">
+                    <div><strong>{{ username }}</strong></div>
+                    <div class="navbar-text">Departman: {{ department }}</div>
+                </div>
+                <a class="btn btn-danger" href="{% url 'logout' %}" onclick="clearSelectedAirplane()">Çıkış Yap</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- Sadece Bu Sayfada Mesajı Göster -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Uçak Planı Üretme Formu -->
+        <h2 class="text-center">Uçak Planı Üret</h2>
+        <form action="{% url 'create_airplane' %}" method="POST" class="mb-5">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="modelType" class="form-label">Model Türü</label>
+                <select name="model_type" id="modelType" class="form-select" required>
+                    <option value="TB2">TB2</option>
+                    <option value="TB3">TB3</option>
+                    <option value="AKINCI">AKINCI</option>
+                    <option value="KIZILELMA">KIZILELMA</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Uçak Planı Üret</button>
+        </form>
+
+        <!-- Filtreleme Seçeneği -->
+        <div class="mb-3">
+            <label for="filterSelect" class="form-label">Uçak Modeline Göre Filtrele:</label>
+            <select id="filterSelect" class="form-select" onchange="filterTable()">
+                <option value="all">Tüm Modeller</option>
+                <option value="TB2">TB2</option>
+                <option value="TB3">TB3</option>
+                <option value="AKINCI">AKINCI</option>
+                <option value="KIZILELMA">KIZILELMA</option>
+            </select>
+        </div>
+
+        <!-- Mevcut Uçaklar ve Parçaları -->
+        <h2 class="text-center">Mevcut Uçaklar</h2>
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Resim</th>
+                    <th>Model</th>
+                    <th>Uçak ID</th>
+                    <th>Parçalar</th>
+                </tr>
+            </thead>
+            <tbody id="airplaneTable">
+                {% for airplane in airplanes %}
+                    <tr class="airplane-row" data-model="{{ airplane.model_type }}">
+                        <td><img src="{% static 'images/' %}{{ airplane.model_type|lower }}.png" alt="{{ airplane.model_type }} resmi" width="50"></td>
+                        <td>{{ airplane.model_type }}</td>
+                        <td>{{ airplane.id }}</td>
+                        <td>
+                            {% if airplane.pieces %}
+                                <ul>
+                                    {% for piece_wrapper in airplane.pieces %}
+                                        <li>{{ piece_wrapper.piece.piece_type }} ({{ piece_wrapper.piece.model_type }}) - ID: {{ piece_wrapper.piece.id }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <span class="text-muted">Bu uçakta parça bulunmamaktadır.</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function filterTable() {
+            const filter = document.getElementById("filterSelect").value;
+            const rows = document.querySelectorAll(".airplane-row");
+
+            rows.forEach(row => {
+                const modelType = row.getAttribute("data-model");
+                if (filter === "all" || filter === modelType) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Sayfa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-text {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .btn-logout {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+            margin-left: 10px;
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    {% load static %}
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Proje</a>
+            <div class="d-flex align-items-center ms-auto">
+                <div class="text-end me-3">
+                    <div><strong>Hoşgeldin {{ username }}!</strong></div>
+                    <div class="navbar-text">Departman: {{ department }}</div>
+                </div>
+                <a class="btn btn-logout" href="{% url 'logout' %}">Çıkış Yap</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Kartlar -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <!-- Parça Üret Kartı -->
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'images/iha.png' %}" class="card-img-top" alt="Bayraktar TB2">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Parça Üret</h5>
+                        {% if department == "Montaj" %}
+                            <p class="card-text text-danger">Montajcılar parça üretemez</p>
+                        {% else %}
+                            <p class="card-text">Parça üretmek için aşağıdaki butona tıklayın.</p>
+                            <a href="{% url 'create_piece' %}" class="btn btn-primary">Parça Üret</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parçalar Kartı -->
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'images/pieces.avif' %}" class="card-img-top" alt="Bayraktar TB2">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Parçalar</h5>
+                        <p class="card-text">Parçaları görmek için tıklayın.</p>
+                        <a href="{% url 'list_pieces' %}" class="btn btn-primary">Parçaları Gör</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uçak Planı Üretme Kartı -->
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'images/kizilelma.png' %}" class="card-img-top" alt="Uçak Planı">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Uçak Planı Üret</h5>
+                        {% if department == "Montaj" %}
+                            <p class="card-text">Uçak planı üretmek için aşağıdaki butona tıklayın.</p>
+                            <a href="{% url 'airplane_plan' %}" class="btn btn-primary">Uçak Planı Üret</a>
+                        {% else %}
+                            <p class="text-danger">Sadece Montaj Takımı uçak planı üretebilir.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uçak Parçalarını Birleştir Kartı -->
+            <div class="col-md-4 d-flex justify-content-center mt-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'images/cekic.png' %}" class="card-img-top" alt="Uçak Parçalarını Birleştir">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Uçak Parçalarını Birleştir</h5>
+                        {% if department == "Montaj" %}
+                            <p class="card-text">Uçak parçalarını birleştirmek için aşağıdaki butona tıklayın.</p>
+                            <a href="{% url 'manage_airplanes' %}" class="btn btn-primary">Parçaları Birleştir</a>
+                        {% else %}
+                            <p class="text-danger">Sadece Montaj Takımı uçaklara parça ekleyebilir.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
